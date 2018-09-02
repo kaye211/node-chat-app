@@ -20,21 +20,15 @@ io.on('connection', socket => {
 	socket.on('disconnect', () => {
 		console.log('disconnected from client');
 	});
-	// socket.emit('newEmail', {
-	// 	sender: 'bonelli@rep.com',
-	// 	text: 'hi',
-	// });
-	socket.emit('newMessage', {
-		sender: 'bonelli@rep.com',
-		text: 'hi',
-		createdAt: 23,
-	});
-	// socket.on('createEmail', newEmail => {
-	// 	console.log('createEmail', newEmail);
-	// });
 
-	socket.on('createMessage', newMessage => {
-		console.log('createMessage', newMessage);
+	socket.on('createMessage', message => {
+		console.log('createMessage', message);
+		//emit to every connection
+		io.emit('newMessage', {
+			from: message.from,
+			text: message.text,
+			createdAt: new Date().getTime(),
+		});
 	});
 });
 server.listen(port, () => {
