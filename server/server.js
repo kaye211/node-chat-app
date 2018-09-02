@@ -20,6 +20,18 @@ io.on('connection', socket => {
 	socket.on('disconnect', () => {
 		console.log('disconnected from client');
 	});
+	//Greeting message to user from admin
+	socket.emit('newMessage', {
+		from: 'Admin',
+		text: 'Welcome new user',
+		createdAt: new Date().getTime(),
+	});
+	//broadcast message to chat room
+	socket.broadcast.emit('newMessage', {
+		from: 'Admin',
+		text: 'New user joined room',
+		createdAt: new Date().getTime(),
+	});
 
 	socket.on('createMessage', message => {
 		console.log('createMessage', message);
@@ -29,6 +41,12 @@ io.on('connection', socket => {
 			text: message.text,
 			createdAt: new Date().getTime(),
 		});
+		//broadcast to all users
+		// socket.broadcast.emit('newMessage', {
+		// 	from: message.from,
+		// 	text: message.text,
+		// 	createdAt: new Date().getTime(),
+		// });
 	});
 });
 server.listen(port, () => {
