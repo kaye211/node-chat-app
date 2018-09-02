@@ -7,6 +7,8 @@ const socketIO = require('socket.io');
 const port = process.env.PORT || 3000;
 const app = express();
 
+const { generateMessage } = require('./utils/message');
+
 var server = http.createServer(app);
 //configure for socketio
 var io = socketIO(server);
@@ -21,26 +23,15 @@ io.on('connection', socket => {
 		console.log('disconnected from client');
 	});
 	//Greeting message to user from admin
-	socket.emit('newMessage', {
-		from: 'Admin',
-		text: 'Welcome new user',
-		createdAt: new Date().getTime(),
-	});
-	//broadcast message to chat room
-	socket.broadcast.emit('newMessage', {
-		from: 'Admin',
-		text: 'New user joined room',
-		createdAt: new Date().getTime(),
-	});
+	socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chatroom'));
 
+	//broadcast message to chat room
+	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User Joined'));
 	socket.on('createMessage', message => {
 		console.log('createMessage', message);
 		//emit to every connection
-		io.emit('newMessage', {
-			from: message.from,
-			text: message.text,
-			createdAt: new Date().getTime(),
-		});
+		io.emit('newMessage', generateMessage(message.from, message.text));
+
 		//broadcast to all users
 		// socket.broadcast.emit('newMessage', {
 		// 	from: message.from,
