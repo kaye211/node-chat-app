@@ -7,7 +7,7 @@ const socketIO = require('socket.io');
 const port = process.env.PORT || 3000;
 const app = express();
 
-const { generateMessage } = require('./utils/message');
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 var server = http.createServer(app);
 //configure for socketio
@@ -32,13 +32,11 @@ io.on('connection', socket => {
 		//emit to every connection
 		io.emit('newMessage', generateMessage(message.from, message.text));
 		//acknowledgement
-		callback('This is from server');
-		//broadcasst to all users
-		// socket.broadcast.emit('newMessage', {
-		// 	from: message.from,
-		// 	text: message.text,
-		// 	createdAt: new Date().getTime(),
-		// });
+		callback();
+	});
+
+	socket.on('createLocationMessage', coords => {
+		io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
 	});
 });
 server.listen(port, () => {
