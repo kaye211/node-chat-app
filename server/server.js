@@ -27,12 +27,13 @@ io.on('connection', socket => {
 
 	//broadcast message to chat room
 	socket.broadcast.emit('newMessage', generateMessage('Admin', 'New User Joined'));
-	socket.on('createMessage', message => {
+	socket.on('createMessage', (message, callback) => {
 		console.log('createMessage', message);
 		//emit to every connection
 		io.emit('newMessage', generateMessage(message.from, message.text));
-
-		//broadcast to all users
+		//acknowledgement
+		callback('This is from server');
+		//broadcasst to all users
 		// socket.broadcast.emit('newMessage', {
 		// 	from: message.from,
 		// 	text: message.text,
